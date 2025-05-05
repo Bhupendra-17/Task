@@ -19,12 +19,21 @@ const App = () => {
 
   const handleSave = async (taskData) => {
     try {
-      const newTask = await createTask(taskData);
-      setTasks([...tasks, newTask]);
+      if (taskToEdit) {
+        // Update existing task
+        const updatedTask = await updateTask(taskToEdit.id, taskData);
+        setTasks(tasks.map((task) => (task.id === taskToEdit.id ? updatedTask : task)));
+        setTaskToEdit(null); // Clear edit mode
+      } else {
+        // Create new task
+        const newTask = await createTask(taskData);
+        setTasks([...tasks, newTask]);
+      }
     } catch (err) {
       console.error("Error saving task:", err);
     }
   };
+  
 
   const handleDelete = async (id) => {
     await deleteTask(id);
